@@ -1,0 +1,22 @@
+# PlatformIO build artifacts
+.pio/
+**/.pio/
+**/compile_commands.json
+
+# Tool session data
+.antigravitycli/
+
+# Graphify generated output (regeneratable)
+graphify-out/
+
+# Windows Alternate Data Streams (Zone.Identifier metadata from downloads)
+*:Zone.Identifier
+
+# Python bytecode
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+
+# Base YOLO model (downloadable; fine-tuned checkpoint in checkpoints/ is kept)
+yolov8n.pt
