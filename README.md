@@ -31,8 +31,8 @@ Training requires as few as **30 teleoperation demonstrations**, making this via
 
 ```
 J0  — Base yaw          (servo_pos[0])
-J1a — Shoulder A        (servo_pos[1])  ← coupled pair
-J1b — Shoulder B        (servo_pos[2])  ← coupled pair
+J1a — Shoulder A        (servo_pos[1])
+J1b — Shoulder B        (servo_pos[2])
 J2  — Elbow/wrist pitch (servo_pos[3])
 J3  — Gripper           (servo_pos[4])
 ```
