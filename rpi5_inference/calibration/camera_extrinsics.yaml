@@ -1,0 +1,4 @@
+# Placeholder — run compute_extrinsics after camera_calibrate.py.
+# Keys match PoseEstimator._load_extrinsics.
+rvec: [0.0, 0.0, 0.0]
+tvec: [0.0, 0.0, 0.5]

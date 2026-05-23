@@ -1,0 +1,7 @@
+# Placeholder — measure actual pixel coordinates of the 4 workspace dots.
+# Keys must be A_px, B_px, C_px, D_px — as read by PoseEstimator._load_homography.
+# World positions are fixed: A=(-0.180,0.100) B=(+0.180,0.100) C=(+0.180,0.220) D=(-0.180,0.220).
+A_px: [100.0, 400.0]
+B_px: [540.0, 400.0]
+C_px: [480.0, 220.0]
+D_px: [160.0, 220.0]

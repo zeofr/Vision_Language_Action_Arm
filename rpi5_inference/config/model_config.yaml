@@ -1,0 +1,31 @@
+yolo:
+  model_path: "checkpoints/yolov8n_vla/weights/best.pt"
+  input_size: 640
+  conf_threshold: 0.5
+  device: "cpu"
+
+vla:
+  model_path: "checkpoints/vla_policy_traced.pt"
+  backbone: "smolvla"
+  chunk_size: 8
+  inference_hz_target: 8
+  device: "cpu"
+
+language:
+  mode: "native_smolvla_or_t5_fallback"
+  fallback_model_name: "google/flan-t5-small"
+  embedding_dim: 512
+  cache_instructions: true
+
+serial:
+  port: "/dev/ttyUSB0"
+  baud: 2000000
+  telemetry_size_bytes: 250
+  command_size_bytes: 20
+  telemetry_hz: 50
+  command_hz: 8
+
+servo:
+  port: "/dev/ttyACM0"
+  baud: 1000000
+  ids: [1, 2, 3, 4, 5]
