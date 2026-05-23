@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c ' *)",
+      "Bash(git rm *)",
+      "Bash(git -C /home/m0mspagetthi/vla_rob log --oneline -10)",
+      "Bash(git -C /home/m0mspagetthi/vla_rob status --short)",
+      "Bash(git -C /home/m0mspagetthi/vla_rob log --oneline -5)",
+      "Bash(git -C /home/m0mspagetthi/vla_rob add /home/m0mspagetthi/vla_rob/demos/)",
+      "Bash(git -C /home/m0mspagetthi/vla_rob commit -m \"refactor: flatten repo structure — move AI/ML code to root level\")"
+    ]
+  }
+}
