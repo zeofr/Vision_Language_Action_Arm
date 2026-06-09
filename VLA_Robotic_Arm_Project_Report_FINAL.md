@@ -39,7 +39,7 @@
     - 10.3 Skill-Conditioned Action Generator
     - 10.4 Multi-Modal Skill Segmentation
 11. [Analytical IK Safety Layer](#11-analytical-ik-safety-layer)
-    - 11.1 4-DOF Kinematic Model
+    - 11.1 5-DOF Kinematic Model
     - 11.2 Inverse Kinematics Solver
     - 11.3 Safety Enforcement
 12. [Real-Time Control Loop](#12-real-time-control-loop)
@@ -68,7 +68,7 @@
 
 Modern Vision-Language-Action (VLA) models have demonstrated remarkable capabilities in robotic manipulation by directly mapping visual observations and natural language instructions to continuous motor commands. However, their deployment on low-cost, low-DOF robotic hardware exposes critical architectural limitations: regression instability under kinematic constraints, prohibitive data requirements in the range of thousands of demonstrations, complete absence of interpretable reasoning, and incompatibility with real-time safety guarantees required in practical settings.
 
-This project proposes a **Hierarchical VLA architecture with Multi-Modal Contact Sensing and Conditioned Motion Planning**, designed for deployment on a 4-DOF serial-bus servo manipulator built around five 12V STS3215 servos. The architecture addresses four concurrent challenges: sample-efficient learning from as few as 30 teleoperation demonstrations, interpretable skill-level planning via discrete skill tokens (REACH, GRASP, LIFT, PLACE), contact sensing without force-torque sensors using an ISM330DHCX industrial IMU mounted on the end-effector, and accurate 3D object localization by combining a fixed overhead Pi Camera 3 for (X, Y) detection with a wrist-mounted VL53L5CX Time-of-Flight sensor for precise grasp-depth (Z) measurement.
+This project proposes a **Hierarchical VLA architecture with Multi-Modal Contact Sensing and Conditioned Motion Planning**, designed for deployment on a 5-DOF serial-bus servo manipulator built around five 12V STS3215 servos. The architecture addresses four concurrent challenges: sample-efficient learning from as few as 30 teleoperation demonstrations, interpretable skill-level planning via discrete skill tokens (REACH, GRASP, LIFT, PLACE), contact sensing without force-torque sensors using an ISM330DHCX industrial IMU mounted on the end-effector, and accurate 3D object localization by combining a fixed overhead Pi Camera 3 for (X, Y) detection with a wrist-mounted VL53L5CX Time-of-Flight sensor for precise grasp-depth (Z) measurement.
 
 The sensing architecture follows a deliberate hybrid placement strategy: the Pi Camera 3 is fixed overhead on a rigid post to reduce arm occlusion during manipulation, the VL53L5CX is arm-mounted at the wrist pointing downward for direct grasp-depth measurement, and the ISM330DHCX is mounted on the end-effector for high-frequency contact vibration detection. This placement strategy is designed to avoid two common demo failure modes — arm occlusion of a behind-mounted camera, and CSI ribbon cable fatigue from eye-in-hand routing.
 
@@ -94,7 +94,7 @@ The STS3215 serial-bus servo ecosystem, used widely in educational and MSME robo
 
 ### 2.3 This Project's Position
 
-This project occupies a specific and underexplored position in the literature: a VLA system designed ground-up for a 4-DOF, five-servo STS3215 serial-bus arm, running on a Raspberry Pi 5 with an ESP32-WROOM-32 real-time co-processor, using only 30 teleoperation demonstrations for initial training, and integrating three sensors (Pi Camera 3 fixed overhead, VL53L5CX wrist-mounted, ISM330DHCX end-effector) in a unified perception and contact sensing pipeline. The central hypothesis is that hierarchical decomposition of manipulation into interpretable skill tokens, combined with multi-modal sensor fusion and analytical IK safety, is sufficient to achieve robust, safe manipulation on an affordable platform without scaling to thousands of demonstrations or expensive additional hardware.
+This project occupies a specific and underexplored position in the literature: a VLA system designed ground-up for a 5-DOF, five-servo STS3215 serial-bus arm, running on a Raspberry Pi 5 with an ESP32-WROOM-32 real-time co-processor, using only 30 teleoperation demonstrations for initial training, and integrating three sensors (Pi Camera 3 fixed overhead, VL53L5CX wrist-mounted, ISM330DHCX end-effector) in a unified perception and contact sensing pipeline. The central hypothesis is that hierarchical decomposition of manipulation into interpretable skill tokens, combined with multi-modal sensor fusion and analytical IK safety, is sufficient to achieve robust, safe manipulation on an affordable platform without scaling to thousands of demonstrations or expensive additional hardware.
 
 ---
 
@@ -104,7 +104,7 @@ This project occupies a specific and underexplored position in the literature: a
 
 Flat end-to-end VLA architectures — those mapping raw pixels and language directly to joint deltas without intermediate representations — exhibit four critical failure modes when deployed on low-DOF arms:
 
-**Regression Instability:** High-DOF arms (6-7 DOF) possess kinematic redundancy that allows multiple joint configurations to reach any given end-effector pose. This redundancy provides a form of action smoothing — small perturbations in predicted joint values rarely produce catastrophic end-effector deviations. A 4-DOF arm has no such redundancy; the joint-to-pose mapping is nearly injective, meaning small errors in joint prediction from the neural network produce large Cartesian deviations at the end-effector. Flat VLA models trained on high-DOF demonstrations are poorly calibrated to this regime.
+**Regression Instability:** High-DOF arms (6-7 DOF) possess kinematic redundancy that allows multiple joint configurations to reach any given end-effector pose. This redundancy provides a form of action smoothing — small perturbations in predicted joint values rarely produce catastrophic end-effector deviations. A 5-DOF arm has no such redundancy; the joint-to-pose mapping is nearly injective, meaning small errors in joint prediction from the neural network produce large Cartesian deviations at the end-effector. Flat VLA models trained on high-DOF demonstrations are poorly calibrated to this regime.
 
 **Prohibitive Data Requirements:** Large VLA models achieve generalization by training across very large multi-robot datasets and typically still require target-domain demonstrations for reliable deployment. For resource-constrained labs and educational settings collecting demonstrations with a single low-cost arm, even 100+ carefully collected demonstrations can be time-consuming. This project therefore uses 30 demonstrations as an initial sample-efficiency target and evaluates whether hierarchical skill conditioning can make that data budget viable.
 
@@ -114,7 +114,7 @@ Flat end-to-end VLA architectures — those mapping raw pixels and language dire
 
 ### 3.2 Sensor Placement and Utilization Challenges
 
-Standard sensor placement conventions fail for a 4-DOF arm in predictable ways. A camera mounted behind and above the arm base is partially occluded by the shoulder and elbow links throughout the REACH phase — exactly when object localization is most critical. A camera mounted eye-in-hand requires routing a fragile CSI ribbon cable through revolute joints, which fatigues within tens of operational cycles and produces catastrophic mid-demo failures.
+Standard sensor placement conventions fail for a 5-DOF arm in predictable ways. A camera mounted behind and above the arm base is partially occluded by the shoulder and elbow links throughout the REACH phase — exactly when object localization is most critical. A camera mounted eye-in-hand requires routing a fragile CSI ribbon cable through revolute joints, which fatigues within tens of operational cycles and produces catastrophic mid-demo failures.
 
 The STS3215 serial bus protocol additionally provides rich onboard telemetry — 12-bit position (0.088°/step), raw load current as a torque proxy, joint velocity, operating temperature, and supply voltage — at up to 50Hz per servo. No published VLA architecture has incorporated this data as part of the skill representation or contact detection pipeline.
 
@@ -177,7 +177,7 @@ This project addresses five gaps not simultaneously covered in existing literatu
 
 The complete system is organized as three interacting layers that operate concurrently:
 
-**Hardware Layer:** A 4-DOF robotic arm driven by five 12V STS3215 serial-bus servos: one base-yaw servo, two mechanically coupled shoulder servos acting as one high-torque pitch joint, one elbow/wrist pitch servo, and one gripper servo. The arm is equipped with a VL53L5CX depth sensor array at the wrist pointing downward toward the gripper, an ISM330DHCX IMU on the end-effector, and a Pi Camera Module 3 mounted on a rigid overhead post pointing straight down at the workspace.
+**Hardware Layer:** A 5-DOF robotic arm driven by five 12V STS3215 serial-bus servos: one base-yaw servo, two mechanically coupled shoulder servos acting as one high-torque pitch joint, one elbow/wrist pitch servo, and one gripper servo. The arm is equipped with a VL53L5CX depth sensor array at the wrist pointing downward toward the gripper, an ISM330DHCX IMU on the end-effector, and a Pi Camera Module 3 mounted on a rigid overhead post pointing straight down at the workspace.
 
 **Real-Time Layer:** An ESP32-WROOM-32 microcontroller executing a 50Hz deterministic control loop via a FreeRTOS task pinned to Core 1 — reading sensor data, computing contact oracle outputs, interpolating waypoints, enforcing joint limit safety, and driving the servo serial bus — with WiFi/BT disabled to eliminate scheduler interference.
 
@@ -244,7 +244,7 @@ flowchart TB
 
 ### 6.1 Manipulator Mechanical Design
 
-The manipulator is a 4-DOF serial chain arm with five physical servos. Two STS3215 servos are mechanically coupled and commanded together, so they act as one logical shoulder joint.
+The manipulator is a 5-DOF serial chain arm with five physical servos. Two STS3215 servos are mechanically coupled and commanded together, so they act as one logical shoulder joint.
 
 | Joint | Axis | Actuator | Notes |
 |---|---|---|---|
@@ -806,7 +806,7 @@ A median filter (window=5, 100ms) is applied post-segmentation to remove single-
 
 ## 11. Analytical IK Safety Layer
 
-### 11.1 4-DOF Kinematic Model
+### 11.1 5-DOF Kinematic Model
 
 The arm has four controllable DOF, but only the first three affect Cartesian end-effector position. The fourth DOF is the gripper open/close servo. The spatial arm chain is parameterized by the Denavit-Hartenberg (DH) convention with the following parameters (measured from CAD/physical arm, refined by calibration):
 
@@ -1190,7 +1190,7 @@ Engineering universities across India operate robotics laboratories with constra
 
 This project proposes a complete engineering plan for deploying Vision-Language-Action control on low-cost robotic hardware with practical safety constraints and multi-modal sensing. The central planned contributions are:
 
-**Architectural:** A hierarchical VLA decomposition (skill prediction → action generation → IK safety) that makes sample-efficient learning on 4-DOF arms tractable, paired with a dual-processor compute split (ESP32-WROOM-32 running FreeRTOS Core 1 for 50Hz real-time servo control, Raspberry Pi 5 for 8Hz ML inference) that eliminates OS jitter from the servo control loop.
+**Architectural:** A hierarchical VLA decomposition (skill prediction → action generation → IK safety) that makes sample-efficient learning on 5-DOF arms tractable, paired with a dual-processor compute split (ESP32-WROOM-32 running FreeRTOS Core 1 for 50Hz real-time servo control, Raspberry Pi 5 for 8Hz ML inference) that eliminates OS jitter from the servo control loop.
 
 **Sensing and Placement:** A hybrid sensor placement strategy — Pi Camera 3 fixed overhead for occlusion-resistant top-down detection, VL53L5CX wrist-mounted in 8×8 15Hz mode for direct grasp depth measurement, ISM330DHCX end-effector-mounted for high-frequency contact vibration detection — that maximizes sensing accuracy while reducing the mechanical failure modes associated with alternative placements.
 
