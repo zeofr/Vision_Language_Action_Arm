@@ -1,4 +1,4 @@
-# Vision–Language–Action Control for 4-DOF Robotic Manipulation Using Hierarchical Conditioned Motion Planning with Multi-Modal Contact Sensing
+# Vision–Language–Action Control for 5-DOF Robotic Manipulation Using Hierarchical Conditioned Motion Planning with Multi-Modal Contact Sensing
 
 **Author:** Team
 
